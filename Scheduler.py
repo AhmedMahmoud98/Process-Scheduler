@@ -51,8 +51,31 @@ class Scheduler:
     def Schedule(self):
         self.Sort()
         Step = 0
+        #########################################################################################
+        if(Scheduling_Algorithm == "HPF"):
+            while(len(self.Processes) != 0):
+                if(self.Processes[0].Arrival_Time > Step):
+                    self.Ideal.append((Step, self.Processes[0].Arrival_Time))
+                    Step = self.Processes[0].Arrival_Time
+
+                self.Results[self.Processes[0].PID].append(
+                    (Step, Step + self.Processes[0].Burst_Time))
+                Step += self.Processes[0].Burst_Time
+                self.Processes.pop(0)
+                i = 0
+                for p in self.Processes:
+                    if(p.Arrival_Time > Step):
+                        break
+                    i += 1
+                if(i != 0):
+                    self.Processes[:i] = sorted(self.Processes[:i],
+                                                key=lambda p: (p.Priority, p.Arrival_Time, p.PID))
+                if(Context_Switch_Time != 0 and len(self.Processes) != 0):
+                    self.Context_Switch.append(
+                        (Step, Step + self.Context_Switch_Time))
+                    Step += self.Context_Switch_Time
 #########################################################################################
-        if(Scheduling_Algorithm == "HPF" or Scheduling_Algorithm == "FCFS"):
+        elif(Scheduling_Algorithm == "FCFS"):
             for index, Process in enumerate(self.Processes):
                 if(Process.Arrival_Time > Step):
                     self.Ideal.append((Step, Process.Arrival_Time))
@@ -67,7 +90,7 @@ class Scheduler:
                     (Step, Step + Process.Burst_Time))
                 Step += Process.Burst_Time
 ########################################################################################
-        if(Scheduling_Algorithm == "SRTN"):
+        elif(Scheduling_Algorithm == "SRTN"):
 
             Temp_Processes = self.Processes
             First_Time = True
@@ -117,7 +140,7 @@ class Scheduler:
                             break
 
 #############################################################################
-        if(Scheduling_Algorithm == "RR"):
+        elif(Scheduling_Algorithm == "RR"):
             Arrived = []
             if(len(self.Processes) != 0 and self.Processes[0].Arrival_Time != 0):
                 self.Ideal.append((Step, self.Processes[0].Arrival_Time))

@@ -10,7 +10,7 @@
       "request": "launch",
       "program": "${file}",
       "console": "integratedTerminal",
-      "args": ["output.txt", "RR", "0", "1"]
+      "args": ["output.txt", "HPF", "0", "1"]
     }
   ]
 }

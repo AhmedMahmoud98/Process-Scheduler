@@ -135,9 +135,7 @@ class Scheduler:
                 if(len(self.Processes) == 0 and len(Arrived) == 0):
                     break
 
-                print("hi ", [print(arrv) for arrv in Arrived])
                 if(len(Arrived) != 0):
-                    print("step :", Step)
                     if(self.Quantam < Arrived[0].Remaining_Time):
                         self.Results[Arrived[0].PID].append(
                             (Step, Step + self.Quantam))

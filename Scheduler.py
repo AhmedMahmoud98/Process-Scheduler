@@ -1,5 +1,6 @@
 import sys
 import os
+import matplotlib.pyplot as plt
 
 
 class Process:
@@ -25,8 +26,8 @@ class Scheduler:
         self.Context_Switch_Time = Context_Switch_Time
         self.Quantam = Quantam
         self.Results = dict((key, []) for key in range(1, len(Processes) + 1))
-        self.Context_Switch = [()]
-        self.Ideal = [()]
+        self.Context_Switch = []
+        self.Ideal = []
 
     def __repr__(self):
         return "Scheduler()"
@@ -51,7 +52,7 @@ class Scheduler:
     def Schedule(self):
         self.Sort()
         Step = 0
-        #########################################################################################
+#########################################################################################
         if(Scheduling_Algorithm == "HPF"):
             while(len(self.Processes) != 0):
                 if(self.Processes[0].Arrival_Time > Step):
@@ -187,13 +188,44 @@ class Scheduler:
                     Arrived.append(Arrived.pop(0))
                 else:
                     Arrived.pop(0)
+#############################################################################            
+    def Draw(self):
+        all_tuples = []
+        Ideal_level = (0,)
+        temp = ()
+        for i in range(len(self.Ideal)):
+            temp = self.Ideal[i] + Ideal_level
+            all_tuples.append(temp)
+        
+        Context_Switch_level = (0.5,)
+        for i in range(len(self.Context_Switch)):
+            temp = self.Context_Switch[i] + Context_Switch_level
+            all_tuples.append(temp)
+             
+        for level_result in self.Results.items():
+            for i in range(len(level_result[1])):
+                temp = level_result[1][i] + (level_result[i],)    
+                all_tuples.append(temp)
+        
+        all_tuples = sorted(all_tuples, key=lambda tup: tup[0])
+        
+        x = []
+        y = []
+        for period in all_tuples:
+            x.append(period[0])
+            y.append(period[2])
+        
+        x.append(all_tuples[len(all_tuples) - 1][1])
+        y.insert(0,0)
+        plt.step(x, y)
+        plt.show()
+        
+        
 #############################################################################
-
-
 Number_Of_Arguments = len(sys.argv)
 if(Number_Of_Arguments < 4):
     print("There is an missed argument")
-    exit()
+    sys.exit()
 
 Input_File_Name = sys.argv[1]
 Scheduling_Algorithm = sys.argv[2]
@@ -223,6 +255,4 @@ if os.path.exists(Input_File_Name):
 Scheduler = Scheduler(Process_Arr, Scheduling_Algorithm,
                       Context_Switch_Time, Quantam)
 Scheduler.Schedule()
-print(Scheduler.Results)
-print(Scheduler.Ideal)
-print(Scheduler.Context_Switch)
+Scheduler.Draw()

@@ -1,7 +1,7 @@
 import sys
 import os
 import matplotlib.pyplot as plt
-
+import numpy as np
 
 class Process:
     def __init__(self, PID, Arrival_Time, Burst_Time, Priority, Starting_Time=-1, Remaining_Time=-1):
@@ -176,11 +176,15 @@ class Scheduler:
                     Step += self.Context_Switch_Time
 
                 Temp = []
+                Count = 0
                 for Process in self.Processes:
                     if(Process.Arrival_Time <= Step):
-                        Temp.append(self.Processes.pop(0))
+                        Temp.append(Process)
+                        Count += 1
                     else:
                         break
+                    
+                self.Processes = self.Processes[Count:]
                 if(len(Temp)):
                     Temp = sorted(Temp, key=lambda p: (p.Arrival_Time, p.PID))
                     Arrived.extend(Temp)
@@ -204,7 +208,7 @@ class Scheduler:
              
         for level_result in self.Results.items():
             for i in range(len(level_result[1])):
-                temp = level_result[1][i] + (level_result[i],)    
+                temp = level_result[1][i] + (level_result[0],)    
                 all_tuples.append(temp)
         
         all_tuples = sorted(all_tuples, key=lambda tup: tup[0])
@@ -214,7 +218,8 @@ class Scheduler:
         for period in all_tuples:
             x.append(period[0])
             y.append(period[2])
-        
+
+        plt.xticks(x, x)
         x.append(all_tuples[len(all_tuples) - 1][1])
         y.insert(0,0)
         plt.step(x, y)

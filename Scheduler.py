@@ -37,7 +37,7 @@ class Scheduler:
     def __repr__(self):
         return "Scheduler()"
 
-    def output_data(self, Data_File_Name):
+    def output_data(self, Data_File_Name="data.txt"):
         for p in self.Processes:
             # turnaround time [0]
             self.Process_Data[p.PID].append(
@@ -62,52 +62,53 @@ class Scheduler:
         else:
             self.Schedule_Data.append([0, 0])
         Data_File = open(Data_File_Name, "w")
-        Data_File.write("Processes Data:\nPID\tTA\tTA_Weighted\tW_T\n")
+        Data_File.write("Processes Data:\nPID\t\tTA\t\tTA_Weighted\t\tW_T\n")
         for p in self.Processes:
-            Data_File.write(str(self.Process_Data[p.PID][0]) + "\t" + str(self.Process_Data[p.PID][1])+"\t" + str(self.Process_Data[p.PID][2] + "\n"))
+            Data_File.write(str(self.Process_Data[p.PID][0]) + "\t\t" + str(
+                self.Process_Data[p.PID][1])+"\t\t" + str(self.Process_Data[p.PID][2]) + "\n")
         Data_File.write("Schedule Data:\nAvg_TA = " + str(
             self.Schedule_Data[0]) + "\nAVG_TA_Weighted = " + str(self.Schedule_Data[1]) + "\n")
 
     def Sort(self):
         if(Scheduling_Algorithm == "HPF"):
-            self.ProcessesCpy=sorted(self.ProcessesCpy, key=lambda p: (
+            self.ProcessesCpy = sorted(self.ProcessesCpy, key=lambda p: (
                 p.Arrival_Time, p.Priority, p.PID))
 
         elif(Scheduling_Algorithm == "FCFS"):
-            self.ProcessesCpy=sorted(
+            self.ProcessesCpy = sorted(
                 self.ProcessesCpy, key=lambda p: (p.Arrival_Time, p.PID))
 
         elif(Scheduling_Algorithm == "SRTN"):
-            self.ProcessesCpy=sorted(self.ProcessesCpy, key=lambda p: (
+            self.ProcessesCpy = sorted(self.ProcessesCpy, key=lambda p: (
                 p.Arrival_Time, p.Burst_Time, p.PID))
 
         elif(Scheduling_Algorithm == "RR"):
-            self.ProcessesCpy=sorted(
+            self.ProcessesCpy = sorted(
                 self.ProcessesCpy, key=lambda p: (p.Arrival_Time, p.PID))
 
     def Schedule(self):
         self.Sort()
-        Step=0
+        Step = 0
 #########################################################################################
         if(Scheduling_Algorithm == "HPF"):
             while(len(self.ProcessesCpy) != 0):
                 if(self.ProcessesCpy[0].Arrival_Time > Step):
                     self.Ideal.append(
                         (Step, self.ProcessesCpy[0].Arrival_Time))
-                    Step=self.ProcessesCpy[0].Arrival_Time
+                    Step = self.ProcessesCpy[0].Arrival_Time
 
                 self.Results[self.ProcessesCpy[0].PID].append(
                     (Step, Step + self.ProcessesCpy[0].Burst_Time))
                 Step += self.ProcessesCpy[0].Burst_Time
                 self.ProcessesCpy.pop(0)
-                i=0
+                i = 0
                 for p in self.ProcessesCpy:
                     if(p.Arrival_Time > Step):
                         break
                     i += 1
                 if(i != 0):
                     # sorted -> max
-                    self.ProcessesCpy[:i]=sorted(self.ProcessesCpy[:i],
+                    self.ProcessesCpy[:i] = sorted(self.ProcessesCpy[:i],
                                                    key=lambda p: (p.Priority, p.Arrival_Time, p.PID))
                 if(Context_Switch_Time != 0 and len(self.ProcessesCpy) != 0):
                     self.Context_Switch.append(
@@ -118,7 +119,7 @@ class Scheduler:
             for index, Process in enumerate(self.ProcessesCpy):
                 if(Process.Arrival_Time > Step):
                     self.Ideal.append((Step, Process.Arrival_Time))
-                    Step=Process.Arrival_Time
+                    Step = Process.Arrival_Time
 
                 if(index != 0 and Context_Switch_Time != 0):
                     self.Context_Switch.append(
@@ -131,23 +132,23 @@ class Scheduler:
 ########################################################################################
         elif(Scheduling_Algorithm == "SRTN"):
 
-            Temp_Processes=self.ProcessesCpy
-            First_Time=True
+            Temp_Processes = self.ProcessesCpy
+            First_Time = True
 
             while(len(Temp_Processes) != 0):
                 if(Temp_Processes[0].Arrival_Time > Step):
                     self.Ideal.append((Step, Temp_Processes[0].Arrival_Time))
-                    Step=Temp_Processes[0].Arrival_Time
+                    Step = Temp_Processes[0].Arrival_Time
 
                 if(First_Time):
-                    Start=Step
-                    First_Time=False
+                    Start = Step
+                    First_Time = False
 
                 if(Temp_Processes[0].Starting_Time == -1):
-                    Temp_Processes[0].Starting_Time=Step
+                    Temp_Processes[0].Starting_Time = Step
 
                 Temp_Processes[0].Remaining_Time -= 1
-                Current_Process=Temp_Processes[0]
+                Current_Process = Temp_Processes[0]
                 Step += 1
 
                 if(Current_Process.Remaining_Time == 0):
@@ -155,8 +156,8 @@ class Scheduler:
                     Temp_Processes.pop(0)
                     if(len(Temp_Processes) == 0):
                         continue
-                    Current_Process=Temp_Processes[0]
-                    First_Time=True
+                    Current_Process = Temp_Processes[0]
+                    First_Time = True
 
                 for index in range(1, len(Temp_Processes)):
                     if(Temp_Processes[index].Arrival_Time > Step):
@@ -175,15 +176,15 @@ class Scheduler:
                                 self.Context_Switch.append(
                                     (Step, Step + self.Context_Switch_Time))
                                 Step += self.Context_Switch_Time - 1
-                            First_Time=True
+                            First_Time = True
                             break
 
 #############################################################################
         elif(Scheduling_Algorithm == "RR"):
-            Arrived=[]
+            Arrived = []
             if(len(self.ProcessesCpy) != 0 and self.ProcessesCpy[0].Arrival_Time != 0):
                 self.Ideal.append((Step, self.ProcessesCpy[0].Arrival_Time))
-                Step=self.ProcessesCpy[0].Arrival_Time
+                Step = self.ProcessesCpy[0].Arrival_Time
             for Process in self.ProcessesCpy:
                 if(Process.Arrival_Time == Step):
                     Arrived.append(self.ProcessesCpy.pop(0))
@@ -193,7 +194,7 @@ class Scheduler:
                 if(len(self.ProcessesCpy) != 0 and len(Arrived) == 0):
                     self.Ideal.append(
                         (Step, self.ProcessesCpy[0].Arrival_Time))
-                    Step=self.ProcessesCpy[0].Arrival_Time
+                    Step = self.ProcessesCpy[0].Arrival_Time
 
                 if(len(self.ProcessesCpy) == 0 and len(Arrived) == 0):
                     break
@@ -208,14 +209,14 @@ class Scheduler:
                         self.Results[Arrived[0].PID].append(
                             (Step, Step + Arrived[0].Remaining_Time))
                         Step += Arrived[0].Remaining_Time
-                        Arrived[0].Remaining_Time=0
+                        Arrived[0].Remaining_Time = 0
                 if(Context_Switch_Time != 0):
                     self.Context_Switch.append(
                         (Step, Step + self.Context_Switch_Time))
                     Step += self.Context_Switch_Time
 
-                Temp=[]
-                Count=0
+                Temp = []
+                Count = 0
                 for Process in self.ProcessesCpy:
                     if(Process.Arrival_Time <= Step):
                         Temp.append(Process)
@@ -223,9 +224,9 @@ class Scheduler:
                     else:
                         break
 
-                self.ProcessesCpy=self.ProcessesCpy[Count:]
+                self.ProcessesCpy = self.ProcessesCpy[Count:]
                 if(len(Temp)):
-                    Temp=sorted(Temp, key=lambda p: (p.Arrival_Time, p.PID))
+                    Temp = sorted(Temp, key=lambda p: (p.Arrival_Time, p.PID))
                     Arrived.extend(Temp)
                 if(Arrived[0].Remaining_Time != 0):
                     Arrived.append(Arrived.pop(0))
@@ -234,27 +235,27 @@ class Scheduler:
 #############################################################################
 
     def Draw(self):
-        all_tuples=[]
-        Ideal_level=(0,)
-        temp=()
+        all_tuples = []
+        Ideal_level = (0,)
+        temp = ()
         for i in range(len(self.Ideal)):
-            temp=self.Ideal[i] + Ideal_level
+            temp = self.Ideal[i] + Ideal_level
             all_tuples.append(temp)
 
-        Context_Switch_level=(0.5,)
+        Context_Switch_level = (0.5,)
         for i in range(len(self.Context_Switch)):
-            temp=self.Context_Switch[i] + Context_Switch_level
+            temp = self.Context_Switch[i] + Context_Switch_level
             all_tuples.append(temp)
 
         for level_result in self.Results.items():
             for i in range(len(level_result[1])):
-                temp=level_result[1][i] + (level_result[0],)
+                temp = level_result[1][i] + (level_result[0],)
                 all_tuples.append(temp)
 
-        all_tuples=sorted(all_tuples, key=lambda tup: tup[0])
+        all_tuples = sorted(all_tuples, key=lambda tup: tup[0])
 
-        x=[]
-        y=[]
+        x = []
+        y = []
         for period in all_tuples:
             x.append(period[0])
             y.append(period[2])
@@ -267,37 +268,38 @@ class Scheduler:
 
 
 #############################################################################
-Number_Of_Arguments=len(sys.argv)
+Number_Of_Arguments = len(sys.argv)
 if(Number_Of_Arguments < 4):
     print("There is an missed argument")
     sys.exit()
 
-Input_File_Name=sys.argv[1]
-Scheduling_Algorithm=sys.argv[2]
-Context_Switch_Time=int(sys.argv[3])
-Quantam=0
+Input_File_Name = sys.argv[1]
+Scheduling_Algorithm = sys.argv[2]
+Context_Switch_Time = int(sys.argv[3])
+Quantam = 0
 
 if(Scheduling_Algorithm == "RR"):
     if(Number_Of_Arguments < 5):
         print("There is an missed argument")
         exit()
     else:
-        Quantam=int(sys.argv[4])
+        Quantam = int(sys.argv[4])
 
 # load processes into array Process_Arr
-Process_Arr=[]
+Process_Arr = []
 if os.path.exists(Input_File_Name):
     with open(Input_File_Name, 'r') as Input_File:
         try:
             for line in Input_File:  # read rest of lines
-                arr=[int(x) for x in line.split()]
+                arr = [int(x) for x in line.split()]
                 if(len(arr) != 0):
                     Process_Arr.append(Process(arr[0], arr[1], arr[2], arr[3]))
         except (OSError, IOError) as e:
             print("Error in reading input file")
             exit()
 
-Scheduler=Scheduler(Process_Arr, Scheduling_Algorithm,
+Scheduler = Scheduler(Process_Arr, Scheduling_Algorithm,
                       Context_Switch_Time, Quantam)
 Scheduler.Schedule()
 Scheduler.Draw()
+Scheduler.output_data()

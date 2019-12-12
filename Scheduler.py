@@ -64,10 +64,9 @@ class Scheduler:
         Data_File = open(Data_File_Name, "w")
         Data_File.write("Processes Data:\nPID\tTA\tTA_Weighted\tW_T\n")
         for p in self.Processes:
-            Data_File.write(
-                str(self.Process_Data[p.PID][0]) + "\t" + str(
-                    self.Process_Data[p.PID][1])+"\t" + str(self.Process_Data[p.PID][2] + "\n")
-        Data_File.write("Schedule Data:\nAvg_TA = " + str(self.Schedule_Data[0]) + "\nAVG_TA_Weighted = " + str(self.Schedule_Data[1]) + "\n")
+            Data_File.write(str(self.Process_Data[p.PID][0]) + "\t" + str(self.Process_Data[p.PID][1])+"\t" + str(self.Process_Data[p.PID][2] + "\n"))
+        Data_File.write("Schedule Data:\nAvg_TA = " + str(
+            self.Schedule_Data[0]) + "\nAVG_TA_Weighted = " + str(self.Schedule_Data[1]) + "\n")
 
     def Sort(self):
         if(Scheduling_Algorithm == "HPF"):

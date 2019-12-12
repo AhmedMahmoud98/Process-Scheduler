@@ -1,2 +1,11 @@
 Processes Data:
-PID		TA		TA_Weighted		W_T
+PID				TA				TA_W				W_T
+1				10				3.33				7
+2				20				4.0			    	15
+3				5				2.5			    	3
+4				20				4.0				    15
+5				19				3.8				    14
+
+Schedule Data:
+Avg_TA = 14.8
+AVG_TA_Weighted = 3.5266666666666664

@@ -260,11 +260,17 @@ class Scheduler:
             x.append(period[0])
             y.append(period[2])
 
-        plt.xticks(x, x)
         x.append(all_tuples[len(all_tuples) - 1][1])
-        y.insert(0, 0)
-        plt.step(x, y)
-        plt.show()
+        y.insert(0,0)
+        fig = plt.figure()
+        ax = fig.add_subplot(111)
+        #plt.xticks(x, x)
+        ax.step(x, y)
+        ratio = 0.5
+        xleft, xright = ax.get_xlim()
+        ybottom, ytop = ax.get_ylim()
+        ax.set_aspect(abs((xright-xleft)/(ybottom-ytop))*ratio)
+
 
 
 #############################################################################

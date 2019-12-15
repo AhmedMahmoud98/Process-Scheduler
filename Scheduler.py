@@ -65,7 +65,8 @@ class Scheduler:
         Data_File.write(
             "Processes Data:\nPID\t\t\t\tTA\t\t\t\tTA_W\t\t\tW_T\n")
         for p in self.Processes:
-            Data_File.write(str(p.PID) + "\t\t\t\t" + str(self.Process_Data[p.PID][0]) + "\t\t\t\t" + str(round(self.Process_Data[p.PID][1],1))+"\t\t\t\t" + str(self.Process_Data[p.PID][2]) + "\n")
+            Data_File.write(str(p.PID) + "\t\t\t\t" + str(self.Process_Data[p.PID][0]) + "\t\t\t\t" + str(
+                round(self.Process_Data[p.PID][1], 1))+"\t\t\t\t" + str(self.Process_Data[p.PID][2]) + "\n")
         Data_File.write("\nSchedule Data:\nAvg_TA = " + str(
             self.Schedule_Data[0]) + "\nAVG_TA_Weighted = " + str(self.Schedule_Data[1]) + "\n")
 
@@ -156,6 +157,10 @@ class Scheduler:
                     Temp_Processes.pop(0)
                     if(len(Temp_Processes) == 0):
                         continue
+                    if(Context_Switch_Time != 0):
+                        self.Context_Switch.append(
+                            (Step, Step + self.Context_Switch_Time))
+                        Step += self.Context_Switch_Time
                     Current_Process = Temp_Processes[0]
                     First_Time = True
 
@@ -173,7 +178,7 @@ class Scheduler:
                             if(Context_Switch_Time != 0):
                                 self.Context_Switch.append(
                                     (Step, Step + self.Context_Switch_Time))
-                                Step += self.Context_Switch_Time 
+                                Step += self.Context_Switch_Time
                             First_Time = True
                             break
 
@@ -208,7 +213,7 @@ class Scheduler:
                             (Step, Step + Arrived[0].Remaining_Time))
                         Step += Arrived[0].Remaining_Time
                         Arrived[0].Remaining_Time = 0
-                if(Context_Switch_Time != 0):
+                if(Context_Switch_Time != 0 and len(Arrived) > 1):
                     self.Context_Switch.append(
                         (Step, Step + self.Context_Switch_Time))
                     Step += self.Context_Switch_Time
@@ -259,7 +264,7 @@ class Scheduler:
             y.append(period[2])
 
         x.append(all_tuples[len(all_tuples) - 1][1])
-        y.insert(0,0)
+        y.insert(0, 0)
         fig = plt.figure()
         ax = fig.add_subplot(111)
         plt.xticks(x, x)
@@ -298,7 +303,7 @@ Process_Arr = []
 if os.path.exists(Input_File_Name):
     with open(Input_File_Name, 'r') as Input_File:
         try:
-            Number_Of_Processes = Input_File.readline();
+            Number_Of_Processes = Input_File.readline()
             for line in Input_File:  # read rest of lines
                 arr = [int(x) for x in line.split()]
                 if(len(arr) != 0):

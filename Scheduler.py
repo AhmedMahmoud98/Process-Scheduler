@@ -175,7 +175,7 @@ class Scheduler:
                                 self.Results[Temp_Processes[0].PID].append(
                                     (Start, Step))
                             Temp_Processes.insert(0, Temp_Processes.pop(index))
-                            if(Context_Switch_Time != 0):
+                            if(not First_Time and Context_Switch_Time != 0):
                                 self.Context_Switch.append(
                                     (Step, Step + self.Context_Switch_Time))
                                 Step += self.Context_Switch_Time

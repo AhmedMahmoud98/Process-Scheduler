@@ -137,6 +137,7 @@ class Scheduler:
             First_Time = True
 
             while(len(Temp_Processes) != 0):
+                end = False
                 if(Temp_Processes[0].Arrival_Time > Step):
                     self.Ideal.append((Step, Temp_Processes[0].Arrival_Time))
                     Step = Temp_Processes[0].Arrival_Time
@@ -160,6 +161,7 @@ class Scheduler:
                     if(Context_Switch_Time != 0):
                         self.Context_Switch.append(
                             (Step, Step + self.Context_Switch_Time))
+                        end = True
                         Step += self.Context_Switch_Time
                     Current_Process = Temp_Processes[0]
                     First_Time = True
@@ -175,7 +177,7 @@ class Scheduler:
                                 self.Results[Temp_Processes[0].PID].append(
                                     (Start, Step))
                             Temp_Processes.insert(0, Temp_Processes.pop(index))
-                            if(not First_Time and Context_Switch_Time != 0):
+                            if(not end and Context_Switch_Time != 0):
                                 self.Context_Switch.append(
                                     (Step, Step + self.Context_Switch_Time))
                                 Step += self.Context_Switch_Time

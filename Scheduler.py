@@ -80,7 +80,7 @@ class Scheduler:
 
         elif(Scheduling_Algorithm == "SRTN"):
             self.ProcessesCpy = sorted(self.ProcessesCpy, key=lambda p: (
-                p.Arrival_Time, p.Burst_Time, p.PID))
+                p.Arrival_Time, p.Remaining_Time, p.PID))
 
         elif(Scheduling_Algorithm == "RR"):
             self.ProcessesCpy = sorted(
@@ -163,10 +163,8 @@ class Scheduler:
                     if(Temp_Processes[index].Arrival_Time > Step):
                         break
                     else:
-                        print(Step, Temp_Processes[index].Arrival_Time, Step,
-                              Current_Process.Remaining_Time, Temp_Processes[index].Burst_Time)
                         if(Current_Process.Remaining_Time < Temp_Processes[index].Burst_Time):
-                            break
+                            continue
                         else:
                             if(not First_Time):
                                 self.Results[Temp_Processes[0].PID].append(
@@ -175,7 +173,7 @@ class Scheduler:
                             if(Context_Switch_Time != 0):
                                 self.Context_Switch.append(
                                     (Step, Step + self.Context_Switch_Time))
-                                Step += self.Context_Switch_Time - 1
+                                Step += self.Context_Switch_Time 
                             First_Time = True
                             break
 
@@ -242,7 +240,7 @@ class Scheduler:
             temp = self.Ideal[i] + Ideal_level
             all_tuples.append(temp)
 
-        Context_Switch_level = (0.5,)
+        Context_Switch_level = (-1,)
         for i in range(len(self.Context_Switch)):
             temp = self.Context_Switch[i] + Context_Switch_level
             all_tuples.append(temp)
@@ -264,13 +262,17 @@ class Scheduler:
         y.insert(0,0)
         fig = plt.figure()
         ax = fig.add_subplot(111)
-        #plt.xticks(x, x)
+        plt.xticks(x, x)
+        plt.yticks(y, y)
+
         ax.step(x, y)
         ratio = 0.5
         xleft, xright = ax.get_xlim()
         ybottom, ytop = ax.get_ylim()
         ax.set_aspect(abs((xright-xleft)/(ybottom-ytop))*ratio)
-
+        fig.set_figheight(15)
+        fig.set_figwidth(20)
+        plt.savefig('Graph.png')
 
 
 #############################################################################
@@ -296,6 +298,7 @@ Process_Arr = []
 if os.path.exists(Input_File_Name):
     with open(Input_File_Name, 'r') as Input_File:
         try:
+            Number_Of_Processes = Input_File.readline();
             for line in Input_File:  # read rest of lines
                 arr = [int(x) for x in line.split()]
                 if(len(arr) != 0):

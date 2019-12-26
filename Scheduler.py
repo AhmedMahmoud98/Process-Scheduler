@@ -110,7 +110,7 @@ class Scheduler:
                 if(i != 0):
                     # sorted -> max
                     self.ProcessesCpy[:i] = sorted(self.ProcessesCpy[:i],
-                                                   key=lambda p: (p.Priority, p.Arrival_Time, p.PID))
+                                                   key=lambda p: (p.Priority, p.PID))
                 if(Context_Switch_Time != 0 and len(self.ProcessesCpy) != 0):
                     self.Context_Switch.append(
                         (Step, Step + self.Context_Switch_Time))
@@ -165,12 +165,23 @@ class Scheduler:
                         Step += self.Context_Switch_Time
                     Current_Process = Temp_Processes[0]
                     First_Time = True
-
+                    
+                i = 0
+                for p in Temp_Processes[1:len(Temp_Processes)]:
+                    if(p.Arrival_Time > Step):
+                        break
+                    i += 1
+                if(i != 0):
+                    # sorted -> max
+                    Temp_Processes[1:i] = sorted(Temp_Processes[1:i],
+                                                   key=lambda p: (p.Remaining_Time, p.PID))
+                    
+              
                 for index in range(1, len(Temp_Processes)):
                     if(Temp_Processes[index].Arrival_Time > Step):
                         break
                     else:
-                        if(Current_Process.Remaining_Time < Temp_Processes[index].Burst_Time):
+                        if(Current_Process.Remaining_Time <= Temp_Processes[index].Burst_Time):
                             continue
                         else:
                             if(not First_Time):
@@ -190,11 +201,14 @@ class Scheduler:
             if(len(self.ProcessesCpy) != 0 and self.ProcessesCpy[0].Arrival_Time != 0):
                 self.Ideal.append((Step, self.ProcessesCpy[0].Arrival_Time))
                 Step = self.ProcessesCpy[0].Arrival_Time
-            for Process in self.ProcessesCpy:
+                
+            Temp = np.copy(self.ProcessesCpy)
+            for Process in Temp:
                 if(Process.Arrival_Time == Step):
                     Arrived.append(self.ProcessesCpy.pop(0))
                 else:
                     break
+                
             while(True):
                 if(len(self.ProcessesCpy) != 0 and len(Arrived) == 0):
                     self.Ideal.append(
